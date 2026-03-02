@@ -22,36 +22,39 @@ config device 'br_lan'
 config interface 'lan'
         option device 'br-lan'
         option proto 'static'
-        option ip6assign '60'
-        option _turris_mode 'managed'
+        option ip6assign '60'  # Assign /60 prefix to LAN, clients get /64
+        option _turris_mode 'managed'  # Turris Omnia specific
         list ipaddr '192.168.0.1/24'
-        option ipv6 '1'
-        option ra '1'
-        option ra_management '1'
-        option ra_default '1'
+        option ipv6 '1'  # Enable IPv6
+        option ra '1'  # Router Advertisement
+        option ra_management '1'  # RA management mode
+        option ra_default '1'  # Set default route via RA
 
 config device
         option name 'eth2.832'
         option type '8021q'
         option ifname 'eth2'
-        option vid '832'
-        list egress_qos_mapping '1:0'
-        list egress_qos_mapping '0:6'
-        list egress_qos_mapping '6:6'
+        option vid '832'  # Orange France FTTH VLAN
+        # egress_qos_mapping: internal_priority:external_priority
+        list egress_qos_mapping '1:0'  # Best Effort
+        list egress_qos_mapping '0:6'  # Background
+        list egress_qos_mapping '6:6'  # Network Control (highest)
 
 # generate XAUTH with https://jsfiddle.net/kgersen/3mnsc6wy/ hex values separated with ":"
 config interface 'wan'
         option proto 'dhcp'
         option device 'eth2.832'
-        option hostname 'livebox'
-        option vendorclass 'sagem'
-        option userclass 'FSVDSL_livebox.Internet.softathome.Livebox3'
+        option hostname 'livebox'  # Hostname sent to DHCP server
+        option vendorclass 'sagem'  # Vendor class identifier (required by Orange)
+        option userclass 'FSVDSL_livebox.Internet.softathome.Livebox3'  # User class (required by Orange)
+        # Requested DHCP options: 1=mask, 3=router, 6=dns, 15=domain, 28=broadcast, 51=lease, 58=T1, 59=T2, 90=auth, 119=search, 120=sip, 125=vendor
         option reqopts '1 3 6 15 28 51 58 59 90 119 120 125'
         # REPLACE with your Livebox's MAC address (format: XX:XX:XX:XX:XX:XX)
         option macaddr '11:22:33:AA:BB:CC'
         option auto '1'
         # REPLACE with your MAC without colons after 01 (e.g., 01112233AABBCC)
         option clientid '01112233AABBCC'
+        # Option 61: Client identifier (same as clientid)
         list sendopts '61:01112233AABBCC'
         # Option 12 (Hostname): "livebox"
         list sendopts '12:6c697665626f78'
@@ -65,14 +68,18 @@ config interface 'wan'
 config interface 'wan6'
         option proto 'dhcpv6'
         option device 'eth2.832'
-        option reqprefix 'auto'
-        option reqaddress 'none'
-        option defaultreqopts '0'
+        option reqprefix 'auto'  # Request IPv6 prefix automatically (/56)
+        option reqaddress 'none'  # Don't request address, only prefix (SLAAC for address)
+        option defaultreqopts '0'  # Don't request default options
+        # Requested DHCPv6 options: 11=option-request, 17=vendor-info, 23=dns, 24=domain-list
         option reqopts '11 17 23 24'
-        option noclientfqdn '1'
-        option noacceptreconfig '1'
+        option noclientfqdn '1'  # Don't send client FQDN
+        option noacceptreconfig '1'  # Don't accept server reconfiguration
+        # DUID-LL (RFC 3315): 00:03 (type=link-layer) + 00:01 (Ethernet) + link-layer address
+        # Format per Orange: 00:03:00:01:01:XX:XX:XX:XX:XX:XX where XX is MAC bytes
+        # This is a fixed value required by Orange France DHCPv6 (not related to WAN MAC)
         option clientid '00030001A23456781926'
-        option iface_dslite '0'
+        option iface_dslite '0'  # Disable DS-Lite (Dual Stack Lite)
         # Option 11 (RFC 3315): XAUTH authentication
         list sendopts '11:XAUTH'
         # Option 15 (User Class): "FSVDSL_livebox.Internet.softathome.Livebox3"
