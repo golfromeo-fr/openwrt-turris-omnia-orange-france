@@ -81,3 +81,47 @@ The XAUTH values are generated using the JSFiddle tool referenced in the network
 `https://jsfiddle.net/kgersen/3mnsc6wy/`
 
 Enter your Orange credentials to generate the hex-encoded XAUTH values for both DHCPv4 (option 90) and DHCPv6 (option 11).
+
+## Automatic AUTH Renewal
+
+**Important:** Orange France rejects AUTH strings that have been used for more than 5-8 weeks. This configuration includes automatic AUTH renewal to prevent connectivity issues.
+
+### How It Works
+The AUTH string (used in DHCP options 90 and 11) is dynamically generated with a random salt each time the renewal script runs. This ensures a fresh AUTH string is always used.
+
+### Files
+- [`etc/config/orange-auth`](etc/config/orange-auth) - Your Orange credentials (FTI login/password)
+- [`etc/config/orange-gen-auth.sh`](etc/config/orange-gen-auth.sh) - AUTH string generator (creates dynamic XAUTH)
+- [`etc/config/orange-auth-init.sh`](etc/config/orange-auth-init.sh) - Init script (runs at boot)
+- [`etc/config/97-orange-config`](etc/config/97-orange-config) - Hotplug script (renews on wan ifdown)
+- [`etc/config/99-wan6-delay`](etc/config/99-wan6-delay) - Delays wan6 to ensure wan is ready
+
+### Installation
+```bash
+# Copy all config files to your router
+cp etc/config/* /etc/config/
+
+# Enable AUTH renewal on boot
+ln -s /etc/config/orange-auth-init.sh /etc/init.d/orange-auth
+/etc/init.d/orange-auth enable
+
+# Enable hotplug renewal (when wan goes down/up)
+ln -s /etc/config/97-orange-config /etc/hotplug.d/iface/97-orange-config
+
+# Enable wan6 delay (prevents wan6 failure)
+ln -s /etc/config/99-wan6-delay /etc/hotplug.d/iface/99-wan6-delay
+
+# Restart network
+/etc/init.d/network restart
+```
+
+### Manual Renewal
+```bash
+/etc/config/orange-gen-auth.sh
+/etc/init.d/network restart
+```
+
+The AUTH will automatically renew:
+- On router boot
+- When the WAN interface goes down (ifdown event)
+- Manually by running the generator script
