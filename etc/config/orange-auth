@@ -1,0 +1,5 @@
+# Orange FTI/Livebox credentials - AUTH renews automatically when orange-gen-auth.sh runs
+LOGIN="login" # without fti/   
+PASSWORD="password"
+BYTE="A"
+SALT_PREFIX="1234567890123"   # first 13 chars fixed

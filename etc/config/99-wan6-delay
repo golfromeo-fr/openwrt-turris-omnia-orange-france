@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Delays wan6 ifup until wan DHCP completes - prevents wan6 failure on Orange network
+
+# integration in openwrt 24.10
+# ln -s /etc/config/99-wan6-delay /etc/hotplug.d/iface/99-wan6-delay
+
+case "$ACTION/$INTERFACE" in
+    ifup/wan)
+        logger -t wan6-delay "wan DHCPv4 up >>>>>>>>>>>>>>>>>>>> sleeping before wan6 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+        sleep 3
+        ifup wan6
+        ;;
+    ifdown/wan)
+        ifdown wan6
+        ;;
+esac
+

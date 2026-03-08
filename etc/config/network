@@ -66,6 +66,7 @@ config interface 'wan'
         list sendopts '90:XAUTH'
 
 config interface 'wan6'
+        option auto '0'
         option proto 'dhcpv6'
         option device 'eth2.832'
         option reqprefix 'auto'  # Request IPv6 prefix automatically (/56)

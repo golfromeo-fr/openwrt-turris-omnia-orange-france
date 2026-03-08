@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Orange hotplug script - renews AUTH on wan ifdown to avoid Orange rejecting old auth
+
+# integration in openwrt 24.10
+# ln -s /etc/config/97-orange-config /etc/hotplug.d/iface/97-orange-config
+# rm /etc/hotplug.d/iface/97-orange-config
+
+
+#!/bin/sh
+
+case "$ACTION/$INTERFACE" in
+    ifdown/wan)
+        logger -t orange-config "wan down, pre-generating auth for next ifup"
+        /etc/config/orange-gen-auth.sh
+        ifdown wan6
+        ;;
+esac
