@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://golfromeo-fr.github.io/openwrt-turris-omnia-orange-france/sitemap.xml
