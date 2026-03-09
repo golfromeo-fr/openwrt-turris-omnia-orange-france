@@ -1,0 +1,5 @@
+theme: jekyll-theme-minimal
+title: "OpenWrt Turris Omnia - Orange France FTTH"
+description: "Working OpenWrt config for Turris Omnia on Orange France FTTH. DHCP over VLAN 832, Livebox 3 spoofing, XAUTH auto-renewal, IPv6 DHCPv6."
+plugins:
+  - jekyll-sitemap
