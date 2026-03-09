@@ -2,6 +2,10 @@
 
 Example configuration for Turris Omnia 9 (OpenWrt) for Orange France FTTH.
 
+## Overview 
+
+This guide provides a working OpenWrt configuration for the Turris Omnia router on Orange France FTTH. It uses DHCP over VLAN 832 instead of PPPoE, mimicking a Livebox 3 to authenticate with Orange's network.
+
 ## Quick Setup
 
 1. **Find your Livebox's MAC address**
@@ -125,3 +129,7 @@ The AUTH will automatically renew:
 - On router boot
 - When the WAN interface goes down (ifdown event)
 - Manually by running the generator script
+
+# Source
+
+- https://lafibre.info/remplacer-livebox/remplacement-de-la-livebox-par-un-routeur-openwrt-18-dhcp-v4v6-tv
